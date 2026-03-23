@@ -112,6 +112,7 @@ public partial class CoreConfigSingboxService
                         outbound.method = AppManager.Instance.GetShadowsocksSecurities(_node).Contains(protocolExtra.SsMethod)
                             ? protocolExtra.SsMethod : Global.None;
                         outbound.password = _node.Password;
+                        outbound.udp_over_tcp = protocolExtra.Uot == true ? true : null;
 
                         if (_node.Network == nameof(ETransport.tcp) && _node.HeaderType == Global.TcpHeaderHttp)
                         {
@@ -269,12 +270,28 @@ public partial class CoreConfigSingboxService
                     {
                         outbound.uuid = _node.Username;
                         outbound.password = _node.Password;
-                        outbound.congestion_control = _node.HeaderType;
+                        outbound.congestion_control = protocolExtra.CongestionControl;
                         break;
                     }
                 case EConfigType.Anytls:
                     {
                         outbound.password = _node.Password;
+                        break;
+                    }
+                case EConfigType.Naive:
+                    {
+                        outbound.username = _node.Username;
+                        outbound.password = _node.Password;
+                        if (protocolExtra.NaiveQuic == true)
+                        {
+                            outbound.quic = true;
+                            outbound.quic_congestion_control = protocolExtra.CongestionControl.NullIfEmpty();
+                        }
+                        if (protocolExtra.InsecureConcurrency > 0)
+                        {
+                            outbound.insecure_concurrency = protocolExtra.InsecureConcurrency;
+                        }
+                        outbound.udp_over_tcp = protocolExtra.Uot == true ? true : null;
                         break;
                     }
             }
@@ -554,7 +571,12 @@ public partial class CoreConfigSingboxService
         for (var i = 0; i < nodes.Count; i++)
         {
             var node = nodes[i];
-            var currentTag = $"{baseTagName}-{i + 1}";
+            var currentTag = $"{baseTagName}-{i + 1}-{node.Remarks}";
+
+            if (nodes.Count == 1)
+            {
+                currentTag = baseTagName;
+            }
 
             if (node.ConfigType.IsGroupType())
             {
@@ -585,8 +607,8 @@ public partial class CoreConfigSingboxService
         for (var i = 0; i < nodesReverse.Count; i++)
         {
             var node = nodesReverse[i];
-            var currentTag = i == 0 ? baseTagName : $"chain-{baseTagName}-{i}";
-            var dialerProxyTag = i != nodesReverse.Count - 1 ? $"chain-{baseTagName}-{i + 1}" : null;
+            var currentTag = i == 0 ? baseTagName : $"chain-{baseTagName}-{i}-{node.Remarks}";
+            var dialerProxyTag = i != nodesReverse.Count - 1 ? $"chain-{baseTagName}-{i + 1}-{node.Remarks}" : null;
             if (node.ConfigType.IsGroupType())
             {
                 var childProfiles = new CoreConfigSingboxService(context with { Node = node, }).BuildGroupProxyOutbounds(currentTag);
@@ -727,13 +749,12 @@ public partial class CoreConfigSingboxService
             }, null);
         }
         var idx = echConfig.IndexOf('+');
-        // NOTE: query_server_name, since sing-box 1.13.0
-        //var queryServerName = idx > 0 ? echConfig[..idx] : null;
+        var queryServerName = idx > 0 ? echConfig[..idx] : null;
         var echDnsServer = idx > 0 ? echConfig[(idx + 1)..] : echConfig;
         return (new Ech4Sbox()
         {
             enabled = true,
-            query_server_name = null,
+            query_server_name = queryServerName,
         }, ParseDnsAddress(echDnsServer));
     }
 }

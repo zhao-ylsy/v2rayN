@@ -1665,4 +1665,31 @@ The "Get Certificate" action may fail if a self-signed certificate is used or if
   <data name="menuGenRegionGroup" xml:space="preserve">
     <value>Group by Region</value>
   </data>
+  <data name="menuEditCopy" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="menuEditSelectAll" xml:space="preserve">
+    <value>Tout sélect</value>
+  </data>
+  <data name="menuEditPaste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="menuEditFormat" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="TbUot" xml:space="preserve">
+    <value>UDP over TCP</value>
+  </data>
+  <data name="menuAddNaiveServer" xml:space="preserve">
+    <value>Ajouter [NaïveProxy]</value>
+  </data>
+  <data name="TbInsecureConcurrency" xml:space="preserve">
+    <value>Insecure Concurrency</value>
+  </data>
+  <data name="TbUsername" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="TbIcmpRoutingPolicy" xml:space="preserve">
+    <value>ICMP routing policy</value>
+  </data>
 </root>
