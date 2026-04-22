@@ -24,6 +24,8 @@ public class Global
     public const string V2raySampleHttpResponseFileName = NamespaceSample + "SampleHttpResponse";
     public const string V2raySampleInbound = NamespaceSample + "SampleInbound";
     public const string V2raySampleOutbound = NamespaceSample + "SampleOutbound";
+    public const string V2raySampleTunInbound = NamespaceSample + "SampleTunInbound";
+    public const string V2raySampleTunRules = NamespaceSample + "SampleTunRules";
     public const string SingboxSampleOutbound = NamespaceSample + "SingboxSampleOutbound";
     public const string CustomRoutingFileName = NamespaceSample + "custom_routing_";
     public const string TunSingboxDNSFileName = NamespaceSample + "tun_singbox_dns";
@@ -42,12 +44,15 @@ public class Global
     public const string SingboxFakeIPFilterFileName = NamespaceSample + "singbox_fakeip_filter";
 
     public const string DefaultSecurity = "auto";
-    public const string DefaultNetwork = "tcp";
-    public const string TcpHeaderHttp = "http";
+    public const string DefaultNetwork = "raw";
+    public const string RawHeaderHttp = "http";
     public const string None = "none";
+    public const string RawNetworkAlias = "tcp";
+    public const string DefaultXhttpMode = "auto";
     public const string ProxyTag = "proxy";
     public const string DirectTag = "direct";
     public const string BlockTag = "block";
+    public const string DnsOutboundTag = "dns";
     public const string DnsTag = "dns-module";
     public const string DirectDnsTag = "direct-dns";
     public const string BalancerTagSuffix = "-round";
@@ -89,7 +94,7 @@ public class Global
     public const string SingboxHostsDNSTag = "hosts_dns";
     public const string SingboxFakeDNSTag = "fake_dns";
 
-    public const int Hysteria2DefaultHopInt = 10;
+    public const int Hysteria2DefaultHopInt = 30;
 
     public const string PolicyGroupExcludeKeywords = @"剩余|过期|到期|重置|[Rr]emaining|[Ee]xpir|[Rr]eset";
 
@@ -143,7 +148,7 @@ public class Global
         @"https://cachefly.cachefly.net/50mb.test",
         @"https://speed.cloudflare.com/__down?bytes=10000000",
         @"https://speed.cloudflare.com/__down?bytes=50000000",
-        @"https://speed.cloudflare.com/__down?bytes=100000000",
+        @"https://speed.cloudflare.com/__down?bytes=99999999",
     ];
 
     public static readonly List<string> SpeedPingTestUrls =
@@ -182,14 +187,15 @@ public class Global
         @"https://raw.githubusercontent.com/Chocolate4U/Iran-v2ray-rules/main/v2rayN/"
     ];
 
-    public static readonly Dictionary<string, string> TcpHttpUserAgentTexts = new()
+    public static readonly Dictionary<string, string> RawHttpUserAgentTexts = new()
     {
         {"chrome","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36" },
         {"firefox","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0" },
         {"safari","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15" },
         {"edge","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.70" },
         {"none",""},
-        {"golang",""}
+        {"golang","Go-http-client/1.1"},
+        {"curl","curl/7.68.0"},
     };
 
     public const string Hysteria2ProtocolShare = "hy2://";
@@ -292,14 +298,12 @@ public class Global
 
     public static readonly List<string> Networks =
     [
-        "tcp",
-        "kcp",
-        "ws",
-        "httpupgrade",
+        "raw",
         "xhttp",
-        "h2",
-        "quic",
-        "grpc"
+        "kcp",
+        "grpc",
+        "ws",
+        "httpupgrade"
     ];
 
     public static readonly List<string> KcpHeaderTypes =
@@ -393,7 +397,8 @@ public class Global
         "chrome",
         "firefox",
         "edge",
-        "golang"
+        "curl",
+        "golang",
     ];
 
     public static readonly List<string> XhttpMode =
@@ -424,11 +429,12 @@ public class Global
 
     public static readonly List<string> DomainDirectDNSAddress =
     [
-        "https://dns.alidns.com/dns-query",
-        "https://doh.pub/dns-query",
-        "https://dns.alidns.com/dns-query,https://doh.pub/dns-query",
-        "223.5.5.5",
         "119.29.29.29",
+        "223.5.5.5",
+        "119.29.29.29,223.5.5.5,https://doh.pub/dns-query",
+        "https://doh.pub/dns-query",
+        "https://dns.alidns.com/dns-query",
+        "https://doh.pub/dns-query,https://dns.alidns.com/dns-query",
         "localhost"
     ];
 
@@ -440,7 +446,7 @@ public class Global
         "https://dns.cloudflare.com/dns-query",
         "https://doh.dns.sb/dns-query",
         "https://doh.opendns.com/dns-query",
-        "https://common.dot.dns.yandex.net",
+        "https://common.dot.dns.yandex.net/dns-query",
         "8.8.8.8",
         "1.1.1.1",
         "185.222.222.222",
@@ -450,8 +456,8 @@ public class Global
 
     public static readonly List<string> DomainPureIPDNSAddress =
     [
-        "223.5.5.5",
         "119.29.29.29",
+        "223.5.5.5",
         "localhost"
     ];
 
@@ -505,6 +511,7 @@ public class Global
     [
         "http",
         "tls",
+        "quic",
         "bittorrent"
     ];
 
@@ -522,7 +529,6 @@ public class Global
         "tls",
         "quic",
         "fakedns",
-        "fakedns+others"
     ];
 
     public static readonly List<int> TunMtus =

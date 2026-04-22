@@ -15,6 +15,8 @@ public class CoreBasicItem
 
     public string DefUserAgent { get; set; }
 
+    public string? SendThrough { get; set; }
+
     public bool EnableFragment { get; set; }
 
     public bool EnableCacheFile4Sbox { get; set; } = true;
@@ -47,11 +49,9 @@ public class KcpItem
 
     public int DownlinkCapacity { get; set; }
 
-    public bool Congestion { get; set; }
+    public int CwndMultiplier { get; set; }
 
-    public int ReadBufferSize { get; set; }
-
-    public int WriteBufferSize { get; set; }
+    public int MaxSendingWindow { get; set; }
 }
 
 [Serializable]
@@ -195,7 +195,7 @@ public class HysteriaItem
 {
     public int UpMbps { get; set; }
     public int DownMbps { get; set; }
-    public int HopInterval { get; set; } = 30;
+    public int HopInterval { get; set; } = Global.Hysteria2DefaultHopInt;
 }
 
 [Serializable]

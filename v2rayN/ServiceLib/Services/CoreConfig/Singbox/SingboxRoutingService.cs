@@ -24,7 +24,7 @@ public partial class CoreConfigSingboxService
                 strategy = directDnsStrategy
             };
 
-            if (_config.TunModeItem.EnableTun)
+            if (context.IsTunEnabled)
             {
                 _coreConfig.route.auto_detect_interface = true;
 
@@ -96,7 +96,6 @@ public partial class CoreConfigSingboxService
                 _coreConfig.route.rules.Add(new()
                 {
                     port = [53],
-                    network = ["udp"],
                     action = "hijack-dns"
                 });
             }
